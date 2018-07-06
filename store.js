@@ -16,7 +16,7 @@ const dictionary = require('./dictionary');
 
     add(dictionary) {
         const data = this.get(dictionary.key);
-        if(data == 'Key not found.' )
+        if(data == 'Key not found.')
         {
             if(dictionary.value != undefined)
             {
@@ -25,6 +25,11 @@ const dictionary = require('./dictionary');
             }
             return 'Please, enter value.'
         }
+        else if(data == 'Please, enter key.')
+        {
+            return 'Please, enter key.';
+        }            
+
         return 'Key already exists.';
     }
 
@@ -33,26 +38,35 @@ const dictionary = require('./dictionary');
     }
 
     get(key) {
-        const result =  fs.readFileSync(this.path, 'utf8').split(',')
-            .map(d => new dictionary(d.split(':')[0], d.split(':')[1]))
-            .find(d => d.key.toLowerCase() === key.toLowerCase());
+        if ( key != undefined)
+        {
+            const result =  fs.readFileSync(this.path, 'utf8').split(',')
+                .map(d => new dictionary(d.split(':')[0], d.split(':')[1]))
+                .find(d => d.key.toLowerCase() === key.toLowerCase());
 
-        return result ? result.toString() : 'Key not found.';
+            return result ? result.toString() : 'Key not found.';
+        }
+        return 'Please, enter key.';
     }
 
     remove(key) {
-        const data =  fs.readFileSync(this.path, 'utf8').split(',')
-            .map(d => new dictionary(d.split(':')[0], d.split(':')[1]))
-            .find(d => d.key.toLowerCase() === key.toLowerCase());
-            
-        if(data != undefined)
+        if(key != undefined)
         {
-            const format = data.key + ':' + data.value + ',';
-            const result = fs.readFileSync(this.path, 'utf8').replace(format, '');
-            fs.writeFileSync(this.path,result);
-            return "Removed Successfully!!";
+            const data =  fs.readFileSync(this.path, 'utf8').split(',')
+                .map(d => new dictionary(d.split(':')[0], d.split(':')[1]))
+                .find(d => d.key.toLowerCase() === key.toLowerCase());
+                
+            if(data != undefined)
+            {
+                const format = data.key + ':' + data.value + ',';
+                const result = fs.readFileSync(this.path, 'utf8').replace(format, '');
+                fs.writeFileSync(this.path,result);
+                return "Removed Successfully!!";
+            }
+            return 'Key not found.';
         }
-        return "Key not found.";
+        else
+            return 'Please, enter key.'
     }
     
 }
